@@ -1,0 +1,41 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.6.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
+	id 'groovy'
+	id 'com.google.cloud.tools.jib' version '2.6.0' // Added
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+repositories {
+	mavenCentral()
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.codehaus.groovy:groovy'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+}
+
+test {
+	useJUnitPlatform()
+}
+
+jib { // Added
+	to {
+		image = "[HARBOR에서 생성한 Project의 주소 : ex) 0.0.0.0:80/A/B]"
+		auth {
+			username = "admin"
+			password = "Harbor12345"
+		}
+		tags = ["latest"]
+		allowInsecureRegistries = true
+	}
+	container {
+		creationTime = "USE_CURRENT_TIMESTAMP"
+	}
+}
